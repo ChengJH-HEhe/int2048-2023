@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef SJTU_BIGINTEGER
 #define SJTU_BIGINTEGER
 
@@ -20,7 +20,13 @@
 namespace sjtu {
 class int2048 {
   // todo
+private:
+  bool f=0;
+  std::vector<int> v;
 public:
+  static constexpr int base = 1000, bit = 3;
+  int pw[4] = {1,10,100,1000};
+  
   // 构造函数
   int2048();
   int2048(long long);
@@ -40,6 +46,8 @@ public:
 
   // 加上一个大整数
   int2048 &add(const int2048 &);
+  int2048 &uadd(const int2048 &);
+  int2048 &uminus(const int2048 &);
   // 返回两个大整数之和
   friend int2048 add(int2048, const int2048 &);
 
@@ -51,6 +59,7 @@ public:
   // ===================================
   // Integer2
   // ===================================
+  int cmp(std::vector<int>, std::vector<int>);
 
   int2048 operator+() const;
   int2048 operator-() const;
