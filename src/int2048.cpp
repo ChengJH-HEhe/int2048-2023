@@ -2,7 +2,7 @@
 
 namespace sjtu {
 
-int2048::int2048() { f = 1;}
+int2048::int2048() {}
 int2048::int2048(long long x) {
   f = 1;
   if(x) {
@@ -19,7 +19,7 @@ int2048::int2048(long long x) {
 int2048::int2048(const std::string &c) {
   int cnt = 0, va = 0, sz = c.size();
   f = 1;
-  for(int i = sz - 1; ~i; i--) {
+  for(int i = sz - 1; i >= 0; i--) {
     if(c[i] == '-') f = -1;
     else {
       if ((++cnt) == 4) {
@@ -30,9 +30,8 @@ int2048::int2048(const std::string &c) {
       } 
     }
   }
+  
   if(cnt) v.push_back(va);
-  // for(auto va : v)
-  //   std::cout << va << std::endl;
 }
 int2048::int2048(const int2048 &b) {
   f = b.f, v = b.v;
@@ -51,12 +50,16 @@ void int2048::read(const std::string &b) {
 }
   // 输出储存的大整数，无需换行
 void int2048::print() {
+  //std::assert(v.empty());
+  if(v.empty()) { std::cout << '0'; return;}
   if(f == -1) std::cout << '-';
-  for(auto it = --v.end(); ; --it) {
-    std::cout << *it ;
-    if(it == v.begin()) {
-      return;
-    }
+  std::cout << *(--v.end());
+  if(v.size() == 1) return;
+  for(auto it = --(--v.end()); ; --it) {
+    if(*it<10) std::cout << '0';
+    if(*it<100) std::cout << '0';
+    std::cout << *it;
+    if(it == v.begin()) return;
   }
 }
 
@@ -72,9 +75,35 @@ int int2048::cmp(std::vector<int> a, std::vector<int> b) {
 }
   // 加上一个大整数
 int2048 &int2048::uadd(const int2048 &a) {
-  //符号不同，变减法，大的减小的符号是大的， *this换成大的，
-  v.resize(std::max(v.size(), a.v.size()));
-  //*this.print();
+  int sz = v.size(), tmp = 0;
+  if(sz < a.v.size())v.resize(sz = a.v.size());
+  for(int i = 0; i < sz-1; ++i) {
+    v[i] += a.v[i];
+    v[i+1] += v[i]/base;
+    v[i] %= base;
+  }
+  v[sz-1] += a.v[sz-1];
+  int pos = sz-1;
+  while(v[pos]>=base) {
+    v.push_back(v[pos]/base);
+    v[pos] %= base;
+    ++pos;
+  }
+  return *this;
+}
+
+int2048 &int2048::uminus(const int2048 &a) {
+  int sz = a.v.size(), tmp = 0;
+  for(int i = 0; i < sz; ++i) {
+    v[i] -= a.v[i];
+    if(v[i]<0){
+      v[i]+=base;
+      v[i+1]--;
+    }
+  }
+  sz = v.size();
+  while(v[sz-1] == 0 && sz) --sz;
+  v.resize(sz);
   return *this;
 }
 
@@ -85,14 +114,18 @@ int2048 &int2048::add(const int2048 &a) {
     int pd = cmp(v,a.v);
     if(!pd) {
       f = 1;
+      v.resize(0);
       return *this;
-    }
+    } 
     if(pd == -1) {
       int2048 c(*this);
       v = a.v, f = a.f;
-    } else if(pd) {
-      
-    }
+      (*this).uminus(c);
+    } else {
+      (*this).uminus(a);
+    } 
+  } else {
+    (*this).uadd(a);
   }
   return *this;
 }
@@ -103,7 +136,9 @@ int2048 add(int2048 a, const int2048 &b) {
 
   // 减去一个大整数
 int2048 &int2048::minus(const int2048 &a) {
-  
+  f = -f;
+  (*this).add(a);
+  f = -f;
   return *this;
 }
   // 返回两个大整数之差
@@ -114,9 +149,9 @@ int2048 minus(int2048 a, const int2048 &b) {
 
 int main() {
   std::ios::sync_with_stdio(false);
-  std::string a;
-  std::cin >> a;
-  sjtu::int2048 b; 
-  b.read(a);
-  b.print();
+  std::string a, b;
+  std::cin >> a >> b;
+  sjtu::int2048 c(a),d(b);
+  c.minus(d);
+  c.print();
 }

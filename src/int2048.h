@@ -20,8 +20,9 @@
 namespace sjtu {
 class int2048 {
   // todo
+  
 private:
-  bool f=0;
+  int f=0;
   std::vector<int> v;
 public:
   static constexpr int base = 1000, bit = 3;
@@ -43,11 +44,12 @@ public:
   void read(const std::string &);
   // 输出储存的大整数，无需换行
   void print();
-
-  // 加上一个大整数
-  int2048 &add(const int2048 &);
+  //无符号
   int2048 &uadd(const int2048 &);
   int2048 &uminus(const int2048 &);
+  // 加上一个大整数
+  int2048 &add(const int2048 &);
+ 
   // 返回两个大整数之和
   friend int2048 add(int2048, const int2048 &);
 
