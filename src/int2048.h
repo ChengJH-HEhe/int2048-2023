@@ -25,15 +25,17 @@ private:
   int f=0;
   std::vector<int> v;
 public:
-  static constexpr int base = 1000, bit = 3;
+  static constexpr int base = 10000, bit = 4;
   int pw[4] = {1,10,100,1000};
-  
   // 构造函数
   int2048();
   int2048(long long);
   int2048(const std::string &);
   int2048(const int2048 &);
 
+  //无符号
+  int2048 &uadd(const int2048 &);
+  int2048 &uminus(const int2048 &);
   // 以下给定函数的形式参数类型仅供参考，可自行选择使用常量引用或者不使用引用
   // 如果需要，可以自行增加其他所需的函数
   // ===================================
@@ -44,9 +46,7 @@ public:
   void read(const std::string &);
   // 输出储存的大整数，无需换行
   void print();
-  //无符号
-  int2048 &uadd(const int2048 &);
-  int2048 &uminus(const int2048 &);
+  
   // 加上一个大整数
   int2048 &add(const int2048 &);
  
@@ -61,7 +61,8 @@ public:
   // ===================================
   // Integer2
   // ===================================
-  int cmp(std::vector<int>, std::vector<int>);
+  friend int cmp(std::vector<int>, std::vector<int>);
+  friend void fft(std::vector<int> &, std::vector<int>);
 
   int2048 operator+() const;
   int2048 operator-() const;
